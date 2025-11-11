@@ -2,16 +2,13 @@
 **A Complete MySQL Database Schema for Managing Students, Courses, Grades & GPA**
 
 ---
-
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 ![MySQL](https://img.shields.io/badge/MySQL-8.0+-blue.svg)
-![Status](https://img.shields.io/badge/status-production%20ready-green)
 
 ---
 
 ## Overview
 
-This is a **fully automated, production-ready** relational database system designed for educational institutions (universities, polytechnics, colleges). It handles:
+This is a **fully automated, production-ready** relational database system designed for a university. It handles:
 
 - Student registration & enrollment
 - Course management
@@ -20,7 +17,7 @@ This is a **fully automated, production-ready** relational database system desig
 - Audit trail for grade changes
 - Data integrity via triggers & cascading cleanup
 
-> **No manual GPA calculation required** — everything is handled by **triggers** and **stored procedures**.
+> **No manual GPA calculation required** — everything is handled by the **triggers** and **stored procedures** I have created.
 
 ---
 
@@ -33,14 +30,13 @@ This is a **fully automated, production-ready** relational database system desig
 | `students` | Student profile & academic status |
 | `departments` | Academic departments |
 | `faculties` | Groups of departments |
-| `programs` | Academic programs (e.g., B.Sc Computer Science) |
+| `programs` | Academic programs (e.g., B.Sc Software Eng) |
 | `staff` | Lecturers, HODs, Admins |
 | `courses` | Course catalog |
 | `academic_sessions` | e.g., 2023/2024 |
 | `semesters` | First/Second semester per session |
 | `course_registrations` | Student course enrollment |
 | `course_allocations` | Lecturer-to-course assignment |
-| `grade_scale` | Grading policy (e.g., 70–100 = A) |
 | `grades` | CA, Exam, Total, Grade, GP |
 | `gpa_records` | Auto-calculated GPA per semester |
 | `transcripts` | Official transcript records |
@@ -142,97 +138,10 @@ This is a **fully automated, production-ready** relational database system desig
 
 ```
 /
-├── schema.sql              -- Full table creation (no indexes)
-├── indexes.sql             -- All performance indexes
-├── triggers.sql            -- All triggers + stored procedures
-├── sample_data.sql         -- Optional: insert sample records
+├── academia_database.sql              -- Full table creation
+├── academia_indexes.sql             -- All performance indexes
+├── academia_triggers+stored_procedures.sql            -- All triggers + stored procedures
 └── README.md               -- This file
 ```
 
 ---
-
-## Setup Instructions
-
-### 1. Create Database
-```sql
-CREATE DATABASE sars_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE sars_db;
-```
-
-### 2. Run Scripts in Order
-```bash
-mysql -u root -p sars_db < schema.sql
-mysql -u root -p sars_db < indexes.sql
-mysql -u root -p sars_db < triggers.sql
-```
-
----
-
-## Sample Queries
-
-### Get Student Transcript
-```sql
-SELECT 
-    s.matric_number, s.first_name, s.last_name,
-    c.course_code, c.course_title, c.credit_units,
-    g.ca_score, g.exam_score, g.total_score, g.grade, g.grade_point,
-    gp.gpa
-FROM students s
-JOIN course_registrations cr ON s.student_id = cr.student_id
-JOIN courses c ON cr.course_id = c.course_id
-JOIN grades g ON cr.registration_id = g.registration_id
-JOIN gpa_records gp ON cr.student_id = gp.student_id AND cr.semester_id = gp.semester_id
-WHERE s.matric_number = 'CSC/2020/001';
-```
-
-### Current Semester GPA (All Students)
-```sql
-SELECT 
-    s.matric_number, s.last_name, s.first_name,
-    gp.gpa, gp.total_credit_units
-FROM gpa_records gp
-JOIN students s ON gp.student_id = s.student_id
-JOIN semesters sem ON gp.semester_id = sem.semester_id
-WHERE sem.is_current = TRUE
-ORDER BY gp.gpa DESC;
-```
-
----
-
-## Security & Best Practices
-
-- Use **parameterized queries** in your app
-- Restrict direct `grades` table access — use API
-- Log `changed_by` in audit (modify trigger to accept `CURRENT_USER`)
-- Backup `audit_log` regularly
-
----
-
-## Contributing
-
-1. Fork the repo
-2. Create a feature branch
-3. Submit a pull request
-
----
-
-## License
-
-[MIT License](LICENSE) – Free to use, modify, and distribute.
-
----
-
-## Author
-
-**Built with precision for academic excellence**  
-*November 11, 2025*
-
----
-
-> **"Automate the routine. Empower the academic."**  
-> — SARS Database Philosophy
-
---- 
-
-**Star this repo if you found it helpful!**  
-Need a frontend? API? Let me know!
