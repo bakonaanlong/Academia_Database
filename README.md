@@ -139,9 +139,10 @@ This is a **fully automated, production-ready** relational database system desig
 ```
 /
 ├── academia_database.sql              -- Full table creation
+├── README.md               -- This file
 ├── academia_indexes.sql             -- All performance indexes
-├── academia_triggers+stored_procedures.sql            -- All triggers + stored procedures
-└── README.md               -- This file
+└──  academia_triggers+stored_procedures.sql            -- All triggers + stored procedures
+
 ```
 
 ---
